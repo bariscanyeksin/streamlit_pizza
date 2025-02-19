@@ -1,0 +1,6 @@
+pandas
+matplotlib
+Pillow
+streamlit
+requests
+bs4
