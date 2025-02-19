@@ -1,0 +1,12 @@
+[client]
+showErrorDetails = false
+
+[ui]
+hideTopBar = true
+
+[theme]
+base="dark"
+primaryColor="#0e0e0e"
+backgroundColor="#0e0e0e"
+secondaryBackgroundColor="#272829"
+textColor="#ffffff"
