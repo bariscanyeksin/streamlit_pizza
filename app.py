@@ -31,6 +31,72 @@ CONFIG = {
     }
 }
 
+# Add this near the top of the file, after the imports
+TRANSLATIONS = {
+    'en': {
+        'player_search': "Player Search",
+        'player_search_placeholder': "Example: En-Nesyri",
+        'player_search_help': "Enter the player's name here.",
+        'player_empty_warning': "Player name is empty. Please enter a search term.",
+        'player_not_found': "No player found matching your search.",
+        'player_selection': "Player Selection",
+        'player_selection_help': "Select the player you want from the list.",
+        'pizza_template': "Pizza Template",
+        'pizza_template_help': "Although the pizza template is automatically determined according to the selected player's position, you can choose any pizza template you want.",
+        'loading_message': "Loading player data...",
+        'stats_not_found': "Player stats could not be retrieved.",
+        'general_info_error': "Player general information could not be retrieved.",
+        'data_load_error': "Error occurred while loading data: {}",
+        'download_button': "Download Chart",
+        'info_text': """This pizza chart is used to visualize a player's performance in specific statistics. 
+        Each slice represents the player's percentile rank among players in the same position in the league/tournament based on a statistic. 
+        The size of the slice indicates the player's performance level in that statistic; 
+        larger slices represent higher rankings.""",
+        'no_player_data': "Player data not found.",
+        'templates': {
+            'Goalkeeper': "Goalkeeper",
+            'Center Back': "Center Back",
+            'Right Back - Left Back': "Right Back - Left Back",
+            'Central Midfielder': "Central Midfielder",
+            'Winger - Attacking Midfielder': "Winger - Attacking Midfielder",
+            'Striker': "Striker"
+        },
+        'season_league_select': "Player | Season - League",
+        'season_league_help': "Select the season and league to compare.",
+    },
+    'tr': {
+        'player_search': "Oyuncu Arama",
+        'player_search_placeholder': "Örneğin: En-Nesyri",
+        'player_search_help': "Oyuncunun ismini buraya girin.",
+        'player_empty_warning': "Oyuncu ismi boş. Lütfen arama terimi girin.",
+        'player_not_found': "Aramanızla eşleşen oyuncu bulunamadı.",
+        'player_selection': "Oyuncu Seçimi",
+        'player_selection_help': "Listeden istediğiniz oyuncuyu seçin.",
+        'pizza_template': "Pizza Şablonu",
+        'pizza_template_help': "Seçilen oyuncunun pozisyonuna göre pizza şablonu otomatik olarak belirlense de istediğiniz pizza şablonunu seçebilirsiniz.",
+        'loading_message': "Oyuncu verileri yükleniyor...",
+        'stats_not_found': "Oyuncu istatistikleri alınamadı.",
+        'general_info_error': "Oyuncu genel bilgileri alınamadı.",
+        'data_load_error': "Veri yüklenirken hata oluştu: {}",
+        'download_button': "Grafiği İndir",
+        'info_text': """Bu pizza grafiği, bir oyuncunun belirli istatistiklerdeki performansını
+        görselleştirmek için kullanılır. Her dilim, oyuncunun bir istatistikteki yüzdelik dilime göre ligde/turnuvada aynı pozisyonda oynayan
+        oyuncular arasındaki sıralamasını temsil eder. Dilimin büyüklüğü, oyuncunun o istatistikteki performans seviyesini gösterir;
+        daha büyük dilimler, daha yüksek sıralamayı ifade eder.""",
+        'no_player_data': "Oyuncunun verisi bulunamadı.",
+        'templates': {
+            'Goalkeeper': "Kaleci",
+            'Center Back': "Stoper",
+            'Right Back - Left Back': "Sağ Bek - Sol Bek",
+            'Central Midfielder': "Merkez Orta Saha",
+            'Winger - Attacking Midfielder': "Kanat - Ofansif Orta Saha",
+            'Striker': "Santrafor"
+        },
+        'season_league_select': "Oyuncu | Sezon - Lig",
+        'season_league_help': "Karşılaştırılmak istenilen sezonu ve ligi seçin.",
+    }
+}
+
 st.set_page_config(
     page_title="Percentile Pizza Chart",
     initial_sidebar_state="expanded"
@@ -206,15 +272,32 @@ def fetch_players(search_term):
         st.error(f"Arama sırasında hata oluştu: {str(e)}")
         return {}
 
-search_term = st.sidebar.text_input("Oyuncu Arama", placeholder="Örneğin: En-Nesyri", help="Oyuncunun ismini buraya girin.")
+# Add this after the st.set_page_config
+# Language selector in sidebar
+selected_lang = st.sidebar.selectbox(
+    "Language / Dil",
+    options=['tr', 'en'],
+    format_func=lambda x: 'Türkçe' if x == 'tr' else 'English'
+)
+
+# Update the text elements in the app to use translations
+# For example, replace:
+search_term = st.sidebar.text_input(
+    TRANSLATIONS[selected_lang]['player_search'],
+    placeholder=TRANSLATIONS[selected_lang]['player_search_placeholder'],
+    help=TRANSLATIONS[selected_lang]['player_search_help']
+)
+
+# Initialize all_players at the global scope before using it
+all_players = {}
 
 if not search_term.strip():
-    st.sidebar.warning("Oyuncu ismi boş. Lütfen arama terimi girin.")
+    st.sidebar.warning(TRANSLATIONS[selected_lang]['player_empty_warning'])
 else:
     players1 = fetch_players(search_term)
 
     if players1:
-        all_players = {**players1}
+        all_players = {**players1}  # Now this updates the global all_players
         
         # Initialize session state
         if 'selected_player' not in st.session_state:
@@ -228,11 +311,11 @@ else:
             st.session_state.selected_season = None  # Reset season when player changes
 
         selected_player = st.sidebar.selectbox(
-            "Oyuncu Seçimi", 
+            TRANSLATIONS[selected_lang]['player_selection'],
             options=list(all_players.keys()),
             key='selected_player',
             on_change=on_player_select,
-            help="Listeden istediğiniz oyuncuyu seçin."
+            help=TRANSLATIONS[selected_lang]['player_selection_help']
         )
 
         player_id = all_players.get(selected_player)
@@ -242,7 +325,7 @@ else:
 def get_player_season_infos(player_id):
     response = requests.get(f'https://www.fotmob.com/api/playerData?id={player_id}', headers=headers(player_id))
     data = response.json()
-    return data["statSeasons"]
+    return data.get('statSeasons', [])
 
 def select_season_and_league(player_seasons):
     options = []
@@ -256,7 +339,11 @@ def select_season_and_league(player_seasons):
             options.append(display_name)
             option_to_entryid[display_name] = entry_id
 
-    selected_option = st.sidebar.selectbox(f"Oyuncu | Sezon - Lig", options, help="Karşılaştırılmak istenilen sezonu ve ligi seçin.")
+    selected_option = st.sidebar.selectbox(
+        TRANSLATIONS[selected_lang]['season_league_select'],
+        options,
+        help=TRANSLATIONS[selected_lang]['season_league_help']
+    )
     return option_to_entryid[selected_option]
 
 def get_player_primary_position(player_id):
@@ -465,30 +552,53 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
         else:
             player_season_id = "0-0"
             
-        # Pozisyonları Türkçeye çeviren dict
-        position_translation_dict = {
-            "Goalkeeper": "Kaleci",
-            "Keeper": "Kaleci",
-            "Right Back": "Sağ Bek",
-            "Left Back": "Sol Bek",
-            "Center Back": "Stoper",
-            "Right Wing-Back": "Sağ Kanat Bek",
-            "Left Wing-Back": "Sol Kanat Bek",
-            "Right Midfielder": "Sağ Orta Saha",
-            "Left Midfielder": "Sol Orta Saha",
-            "Central Midfielder": "Merkez Orta Saha",
-            "Attacking Midfielder": "Ofansif Orta Saha",
-            "Defensive Midfielder": "Defansif Orta Saha",
-            "Right Winger": "Sağ Kanat",
-            "Left Winger": "Sol Kanat",
-            "Striker": "Forvet",
-            "Forward": "Hücumcu",
-            "Center Forward": "Santrafor"
-        }
-        
+        # Update the position translation to handle both languages
+        def translate_position(position, lang):
+            position_translations = {
+                'en': {
+                    "Goalkeeper": "Goalkeeper",
+                    "Keeper": "Goalkeeper",
+                    "Right Back": "Right Back",
+                    "Left Back": "Left Back",
+                    "Center Back": "Center Back",
+                    "Right Wing-Back": "Right Wing-Back",
+                    "Left Wing-Back": "Left Wing-Back",
+                    "Right Midfielder": "Right Midfielder",
+                    "Left Midfielder": "Left Midfielder",
+                    "Central Midfielder": "Central Midfielder",
+                    "Attacking Midfielder": "Attacking Midfielder",
+                    "Defensive Midfielder": "Defensive Midfielder",
+                    "Right Winger": "Right Winger",
+                    "Left Winger": "Left Winger",
+                    "Striker": "Striker",
+                    "Forward": "Forward",
+                    "Center Forward": "Center Forward"
+                },
+                'tr': {
+                    "Goalkeeper": "Kaleci",
+                    "Keeper": "Kaleci",
+                    "Right Back": "Sağ Bek",
+                    "Left Back": "Sol Bek",
+                    "Center Back": "Stoper",
+                    "Right Wing-Back": "Sağ Kanat Bek",
+                    "Left Wing-Back": "Sol Kanat Bek",
+                    "Right Midfielder": "Sağ Orta Saha",
+                    "Left Midfielder": "Sol Orta Saha",
+                    "Central Midfielder": "Merkez Orta Saha",
+                    "Attacking Midfielder": "Ofansif Orta Saha",
+                    "Defensive Midfielder": "Defansif Orta Saha",
+                    "Right Winger": "Sağ Kanat",
+                    "Left Winger": "Sol Kanat",
+                    "Striker": "Forvet",
+                    "Forward": "Hücumcu",
+                    "Center Forward": "Santrafor"
+                }
+            }
+            return position_translations[lang].get(position, position)
+
+        # Then update where we use the position translation
         player_primary_position = get_player_primary_position(player_id)
-        
-        player_primary_position_tr = position_translation_dict.get(player_primary_position, player_primary_position)
+        player_position_translated = translate_position(player_primary_position, selected_lang)
         
         selectbox_index = 0
 
@@ -505,39 +615,55 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
         if player_primary_position == "Striker":
             selectbox_index = 5
             
-        pizza_template = st.sidebar.selectbox("Pizza Şablonu", ["Kaleci", "Stoper", "Sağ Bek - Sol Bek", 
-                                                                "Merkez Orta Saha", "Kanat - Ofansif Orta Saha", 
-                                                                "Santrafor"], index=selectbox_index, help="Seçilen oyuncunun pozisyonuna göre pizza şablonu otomatik olarak belirlense de istediğiniz pizza şablonunu seçebilirsiniz.")
+        pizza_template = st.sidebar.selectbox(
+            TRANSLATIONS[selected_lang]['pizza_template'],
+            options=list(TRANSLATIONS[selected_lang]['templates'].values()),
+            index=selectbox_index,
+            help=TRANSLATIONS[selected_lang]['pizza_template_help']
+        )
 
-        if (pizza_template == "Kaleci"):
+        # Get the template key based on selected value
+        def get_template_key(selected_template, lang):
+            # Reverse lookup in templates dictionary
+            templates = TRANSLATIONS[lang]['templates']
+            for key, value in templates.items():
+                if value == selected_template:
+                    return key
+            return None
+
+        # Get the template key
+        template_key = get_template_key(pizza_template, selected_lang)
+
+        # Use template key for conditions instead of translated values
+        if template_key == "Goalkeeper":
             stat_titles = ["Saves", "Save percentage", "Goals prevented", "Clean sheets", "Penalty goals saves",
-                        "Pass accuracy", "Accurate long balls", "Long ball accuracy"]
+                         "Pass accuracy", "Accurate long balls", "Long ball accuracy"]
 
-        if (pizza_template == "Stoper"):
+        if template_key == "Center Back":
             stat_titles = ['Tackles won', 'Tackles won %', 'Duels won', 'Duels won %', 'Interceptions', 'Recoveries', 'Blocked scoring attempt',
-                        'Accurate passes', 'Accurate long balls',  'Long ball accuracy']
+                         'Accurate passes', 'Accurate long balls',  'Long ball accuracy']
 
-        if (pizza_template == "Sağ Bek - Sol Bek"):
+        if template_key == "Right Back - Left Back":
             stat_titles = ['Tackles won', 'Duels won', 'Duels won %', 'Interceptions', 'Recoveries',
-                        'Accurate passes', 'Chances created', 'Successful crosses', 'Cross accuracy',
-                        'Dribbles', 'Touches in opposition box']
+                         'Accurate passes', 'Chances created', 'Successful crosses', 'Cross accuracy',
+                         'Dribbles', 'Touches in opposition box']
             
-        if (pizza_template == "Merkez Orta Saha"):
+        if template_key == "Central Midfielder":
             stat_titles = ['Accurate passes', 'Pass accuracy', 'Accurate long balls', 'Long ball accuracy',
-                        'Tackles won', 'Interceptions', 'Recoveries', 'Duels won', 'Aerials won', 'Possession won final 3rd',
-                        'Touches', 'Dribbles']
+                         'Tackles won', 'Interceptions', 'Recoveries', 'Duels won', 'Aerials won', 'Possession won final 3rd',
+                         'Touches', 'Dribbles']
             
-        if (pizza_template == "Kanat - Ofansif Orta Saha"):
+        if template_key == "Winger - Attacking Midfielder":
             stat_titles = ['xG', 'Shots', 'Shots on target',
-                        'xA', 'Chances created', 'Successful crosses',
-                        'Duels won', 'Possession won final 3rd', 'Fouls won',
-                        'Dribbles', 'Dribbles success rate']
+                         'xA', 'Chances created', 'Successful crosses',
+                         'Duels won', 'Possession won final 3rd', 'Fouls won',
+                         'Dribbles', 'Dribbles success rate']
             
-        if (pizza_template == "Santrafor"):
+        if template_key == "Striker":
             stat_titles = ['Goals', 'xG excl. penalty', 'Shots', 'Shots on target',
-                        'xA', 'Chances created',
-                        'Duels won', 'Duels won %', 'Aerials won', 'Aerials won %', 'Possession won final 3rd', 'Fouls won']
-            
+                         'xA', 'Chances created',
+                         'Duels won', 'Duels won %', 'Aerials won', 'Aerials won %', 'Possession won final 3rd', 'Fouls won']
+
         player_stats = fetch_player_stats(int(player_id), player_season_id)
         
         if player_stats != None:
@@ -599,9 +725,32 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                     
                     player_team, player_team_id = get_team_name_from_season_and_league(player_general_data, player_season_name, player_league)
                     
-                    stat_titles_tr = translate_stats(stat_titles, translation_dict)
-                                        
-                    plot = create_pizza_chart(df_stat_values, df_stat_values_percentage, stat_titles_tr, player_name, player_id, player_team_id, player_league, player_primary_position_tr, player_minute, background_color="#0e0e0e", main_color="#0e346d")
+                    # Before creating the pizza chart, decide which stat titles to use based on language
+                    if selected_lang == 'en':
+                        chart_stat_titles = stat_titles  # Use English titles directly
+                        minute_string = "Minutes"
+                        data_string = "Data"
+                    else:
+                        chart_stat_titles = translate_stats(stat_titles, translation_dict)  # Translate to Turkish
+                        minute_string = "Dakika"
+                        data_string = "Veri"
+                    
+                    # Update the pizza chart creation
+                    plot = create_pizza_chart(
+                        df_stat_values,
+                        df_stat_values_percentage,
+                        chart_stat_titles,  # Use language-specific titles
+                        player_name,
+                        player_id,
+                        player_team_id,
+                        player_league,
+                        player_position_translated,  # Use the translated position
+                        player_minute,
+                        minute_string,
+                        data_string,
+                        background_color="#0e0e0e",
+                        main_color="#0e346d"
+                    )
                     
                     st.pyplot(plot)
                 
@@ -680,7 +829,7 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                     player_league_clean = player_league.replace(" ", "-")
                     
                     st.download_button(
-                        label="Grafiği İndir",
+                        label=TRANSLATIONS[selected_lang]['download_button'],
                         data=buf,
                         file_name=f"{player_name_clean}-{player_season_name}-{player_league_clean}.png",
                         mime="image/png"
@@ -691,12 +840,9 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                     
                     # Bilgilendirme metinlerini div içinde ortalanmış olarak ayarlama
                     st.markdown(
-                        """
+                        f"""
                         <div style='text-align: center; max-width:550px; margin: 0 auto; cursor:default'>
-                            <p style='font-size:12px; color:gray;'> Bu pizza grafiği, bir oyuncunun belirli istatistiklerdeki performansını
-                            görselleştirmek için kullanılır. Her dilim, oyuncunun bir istatistikteki yüzdelik dilime göre ligde/turnuvada aynı pozisyonda oynayan
-                            oyuncular arasındaki sıralamasını temsil eder. Dilimin büyüklüğü, oyuncunun o istatistikteki performans seviyesini gösterir;
-                            daha büyük dilimler, daha yüksek sıralamayı ifade eder. </p>
+                            <p style='font-size:12px; color:gray;'>{TRANSLATIONS[selected_lang]['info_text']}</p>
                         </div>
                         """,
                         unsafe_allow_html=True
