@@ -19,7 +19,7 @@ Analiz için bir sezon ve turnuva seçin
 Oluşturulan yüzdelik dilim pizza grafiğini görüntüleyin
 İndirme düğmesini kullanarak grafiği indirin
 
-## -
+-----------
 
 I created an interactive web application that visualizes the statistical performance of footballers in the form of pizza charts. The application shows a player's ranking among other players in the same position in a given league or tournament by creating percentile-based comparisons with data from FotMob.
 
