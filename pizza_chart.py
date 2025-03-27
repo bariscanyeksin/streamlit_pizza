@@ -73,7 +73,7 @@ def fetch_team_logo(team_id):
             print(f"HTTPError: {e}")
         return None
 
-def create_pizza_chart(values, values_perc, params, player_name, player_id, team_id, league_name, position, minute, background_color="white", main_color="#212e47", label_color="gray"):
+def create_pizza_chart(values, values_perc, params, player_name, player_id, team_id, league_name, position, minute, minute_string, data_string, background_color="white", main_color="#212e47", label_color="gray"):
     """
     Create a pizza chart with separate slices for each statistic.
     
@@ -240,7 +240,7 @@ def create_pizza_chart(values, values_perc, params, player_name, player_id, team
     
     min_90s = minute / 90
     
-    subtitle_2_text = f"{minute} dakika - {min_90s:.1f} 90s'"
+    subtitle_2_text = f"{minute} {minute_string} - {min_90s:.1f} 90s'"
     
     title_ax.text(0, 0.1,
              subtitle_2_text,
@@ -298,7 +298,7 @@ def create_pizza_chart(values, values_perc, params, player_name, player_id, team
     
     # Alt bilgi - tam ortada
     endnote_ax.text(0.5, 0.5,
-             "Veri: FotMob\n@bariscanyeksin",
+             f"{data_string}: FotMob\n@bariscanyeksin",
              size=12, 
              ha="center",  # Yatayda ortala
              va="center",  # Dikeyde en alta yasla
