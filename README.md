@@ -1,4 +1,4 @@
-<img src="https://github.com/user-attachments/assets/1eefb350-6656-4527-93cd-7eb42e04a8c0" width="50%" align="center">
+<div align="center"><img src="https://github.com/user-attachments/assets/1eefb350-6656-4527-93cd-7eb42e04a8c0" width="50%"></div>
 
 
 Futbolcuların istatistiksel performanslarını pizza grafikleri şeklinde görselleştiren interaktif bir web uygulaması oluşturdum. Uygulama, FotMob'dan alınan verilerle yüzdelik dilime dayalı karşılaştırmalar oluşturarak, bir oyuncunun belirli bir lig veya turnuvada aynı pozisyondaki diğer oyuncular arasındaki sıralamasını gösterir.
