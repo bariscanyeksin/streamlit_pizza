@@ -411,6 +411,7 @@ translation_dict = {
         'xG excl. penalty': 'Penaltısız Gol Beklentisi\n(xGnP)',
         'Shots': 'Şut',
         'Shots on target': 'İsabetli Şut',
+        'Assists': 'Asist',
         'xA': 'Asist Beklentisi (xA)',
         'Touches in opposition box': 'Rakip Ceza Sahasında\nTopla Buluşma'
     },
@@ -448,6 +449,7 @@ translation_dict = {
         'xG excl. penalty': 'xG hors penalty',
         'Shots': 'Tirs',
         'Shots on target': 'Tirs cadrés',
+        'Assists': 'Passes décisives',
         'xA': 'xA (passes décisives attendues)',
         'Touches in opposition box': 'Touches dans la surface\nadverse'
     }
@@ -732,13 +734,13 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
             
         if template_key == "Winger - Attacking Midfielder":
             stat_titles = ['Goals', 'Shots', 'Shots on target',
-                         'xA', 'Chances created', 'Successful crosses',
+                         'Assists', 'Chances created', 'Successful crosses',
                          'Duels won', 'Possession won final 3rd', 'Fouls won',
                          'Dribbles', 'Dribbles success rate']
             
         if template_key == "Striker":
             stat_titles = ['Goals', 'xG excl. penalty', 'Shots', 'Shots on target',
-                         'xA', 'Chances created',
+                         'Assists', 'Chances created',
                          'Duels won', 'Duels won %', 'Aerials won', 'Aerials won %', 'Possession won final 3rd', 'Fouls won']
 
         player_stats = fetch_player_stats(int(player_id), player_season_id)
