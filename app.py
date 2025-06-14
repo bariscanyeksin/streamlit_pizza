@@ -33,7 +33,7 @@ CONFIG = {
 TRANSLATIONS = {
     'en': {
         'player_search': "Player Search",
-        'player_search_placeholder': "Example: En-Nesyri",
+        'player_search_placeholder': "Example: Yamal",
         'player_search_help': "Enter the player's name here.",
         'player_empty_warning': "Player name is empty. Please enter a search term.",
         'player_not_found': "No player found matching your search.",
@@ -64,7 +64,7 @@ TRANSLATIONS = {
     },
     'tr': {
         'player_search': "Oyuncu Arama",
-        'player_search_placeholder': "Örneğin: En-Nesyri",
+        'player_search_placeholder': "Örneğin: Yamal",
         'player_search_help': "Oyuncunun ismini buraya girin.",
         'player_empty_warning': "Oyuncu ismi boş. Lütfen arama terimi girin.",
         'player_not_found': "Aramanızla eşleşen oyuncu bulunamadı.",
@@ -95,7 +95,7 @@ TRANSLATIONS = {
     },
     'fr': {
         'player_search': "Recherche de Joueur",
-        'player_search_placeholder': "Exemple : En-Nesyri",
+        'player_search_placeholder': "Exemple : Yamal",
         'player_search_help': "Entrez le nom du joueur ici.",
         'player_empty_warning': "Le nom du joueur est vide. Veuillez saisir un terme de recherche.",
         'player_not_found': "Aucun joueur correspondant à votre recherche n'a été trouvé.",
