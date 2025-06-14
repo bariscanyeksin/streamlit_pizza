@@ -13,7 +13,6 @@ from pizza_chart import create_pizza_chart
 from matplotlib import font_manager as fm
 import os
 
-# Add configuration constants
 CONFIG = {
     'API_BASE_URL': 'https://www.fotmob.com/api',
     'DEFAULT_LANGUAGE': 'tr,en',
@@ -31,7 +30,6 @@ CONFIG = {
     }
 }
 
-# Add this near the top of the file, after the imports
 TRANSLATIONS = {
     'en': {
         'player_search': "Player Search",
@@ -94,6 +92,37 @@ TRANSLATIONS = {
         },
         'season_league_select': "Oyuncu | Sezon - Lig",
         'season_league_help': "Karşılaştırılmak istenilen sezonu ve ligi seçin.",
+    },
+    'fr': {
+        'player_search': "Recherche de Joueur",
+        'player_search_placeholder': "Exemple : En-Nesyri",
+        'player_search_help': "Entrez le nom du joueur ici.",
+        'player_empty_warning': "Le nom du joueur est vide. Veuillez saisir un terme de recherche.",
+        'player_not_found': "Aucun joueur correspondant à votre recherche n'a été trouvé.",
+        'player_selection': "Sélection du Joueur",
+        'player_selection_help': "Sélectionnez le joueur souhaité dans la liste.",
+        'pizza_template': "Modèle de Pizza",
+        'pizza_template_help': "Bien que le modèle de pizza soit automatiquement déterminé en fonction du poste sélectionné du joueur, vous pouvez choisir n'importe quel modèle de pizza.",
+        'loading_message': "Chargement des données du joueur...",
+        'stats_not_found': "Les statistiques du joueur n'ont pas pu être récupérées.",
+        'general_info_error': "Les informations générales du joueur n'ont pas pu être récupérées.",
+        'data_load_error': "Une erreur est survenue lors du chargement des données : {}",
+        'download_button': "Télécharger le Graphique",
+        'info_text': """Ce graphique en pizza est utilisé pour visualiser la performance d'un joueur sur des statistiques spécifiques. 
+        Chaque part représente le rang percentile du joueur parmi les joueurs du même poste dans la ligue/le tournoi pour une statistique donnée. 
+        La taille de la part indique le niveau de performance du joueur sur cette statistique ; 
+        des parts plus grandes représentent des classements plus élevés.""",
+        'no_player_data': "Aucune donnée joueur trouvée.",
+        'templates': {
+            'Goalkeeper': "Gardien de but",
+            'Center Back': "Défenseur central",
+            'Right Back - Left Back': "Arrière droit - Arrière gauche",
+            'Central Midfielder': "Milieu central",
+            'Winger - Attacking Midfielder': "Ailier - Milieu offensif",
+            'Striker': "Attaquant"
+        },
+        'season_league_select': "Joueur | Saison - Ligue",
+        'season_league_help': "Sélectionnez la saison et la ligue à comparer.",
     }
 }
 
@@ -117,7 +146,6 @@ st.markdown(
 plt.rcParams['figure.dpi'] = 300
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Poppins fontunu yükleme
 font_path = os.path.join(current_dir, 'fonts', 'Poppins-Regular.ttf')
 prop = fm.FontProperties(fname=font_path)
 
@@ -272,23 +300,22 @@ def fetch_players(search_term):
         st.error(f"Arama sırasında hata oluştu: {str(e)}")
         return {}
 
-# Add this after the st.set_page_config
-# Language selector in sidebar
 selected_lang = st.sidebar.selectbox(
-    "Language / Dil",
-    options=['tr', 'en'],
-    format_func=lambda x: 'Türkçe' if x == 'tr' else 'English'
+    "Language / Dil / Langue",
+    options=['en', 'tr', 'fr'],
+    format_func=lambda x: {
+        'en': 'English',
+        'tr': 'Türkçe',
+        'fr': 'Français'
+    }.get(x, x)
 )
 
-# Update the text elements in the app to use translations
-# For example, replace:
 search_term = st.sidebar.text_input(
     TRANSLATIONS[selected_lang]['player_search'],
     placeholder=TRANSLATIONS[selected_lang]['player_search_placeholder'],
     help=TRANSLATIONS[selected_lang]['player_search_help']
 )
 
-# Initialize all_players at the global scope before using it
 all_players = {}
 
 if not search_term.strip():
@@ -297,18 +324,15 @@ else:
     players1 = fetch_players(search_term)
 
     if players1:
-        all_players = {**players1}  # Now this updates the global all_players
+        all_players = {**players1}
         
-        # Initialize session state
         if 'selected_player' not in st.session_state:
-            # İlk sonucu otomatik seç
             st.session_state.selected_player = list(all_players.keys())[0]
         if 'selected_season' not in st.session_state:
             st.session_state.selected_season = None
 
-        # Use session state to persist selections
         def on_player_select():
-            st.session_state.selected_season = None  # Reset season when player changes
+            st.session_state.selected_season = None
 
         selected_player = st.sidebar.selectbox(
             TRANSLATIONS[selected_lang]['player_selection'],
@@ -353,45 +377,86 @@ def get_player_primary_position(player_id):
     return primary_position
     
 translation_dict = {
-    'Tackles won': 'Başarılı Top Çalma',
-    'Tackles won %': 'Başarılı Top Çalma\nYüzdesi',
-    'Duels won': 'Kazanılan İkili Mücadele',
-    'Duels won %': 'Kazanılan İkili Mücadele\nYüzdesi',
-    'Aerials won': 'Kazanılan Hava Topu',
-    'Aerials won %': 'Kazanılan Hava Topu\nYüzdesi',
-    'Interceptions': 'Top Kapma',
-    'Recoveries': 'Top Kazanma',
-    'Accurate passes': 'Başarılı Pas',
-    'Pass accuracy': 'Başarılı Pas\nYüzdesi',
-    'Successful crosses': 'Başarılı Orta',
-    'Cross accuracy': 'Başarılı Orta\nYüzdesi',
-    'Accurate long balls': 'Başarılı Uzun Top',
-    'Long ball accuracy': 'Başarılı Uzun Top\nYüzdesi',
-    'Chances created': 'Gol Şansı Yaratma',
-    'Touches': 'Topla Buluşma',
-    'Dribbles': 'Başarılı Çalım',
-    'Dribbles success rate': 'Başarılı Çalım\nYüzdesi',
-    'Saves': 'Kurtarışlar',
-    'Save percentage': 'Kurtarış Yüzdesi',
-    'Goals prevented': 'Gol Kurtarma',
-    'Clean sheets': 'Gol Yemeden\nBitirilen Maçlar',
-    'Penalty goals saves': 'Penaltı Kurtarma',
-    'Blocked scoring attempt': 'Gol Engelleme',
-    'Possession won final 3rd': 'Rakip Alanda\nTop Çalma',
-    'Fouls committed': 'Yapılan Faul',
-    'Fouls won': 'Kazanılan Faul',
-    'Goals': 'Gol',
-    'xG': 'Gol Beklentisi (xG)',
-    'xGOT': 'İsabetli Şutta xG (xGOT)',
-    'xG excl. penalty': 'Penaltısız Gol Beklentisi\n(xGnP)',
-    'Shots': 'Şut',
-    'Shots on target': 'İsabetli Şut',
-    'xA': 'Asist Beklentisi (xA)',
-    'Touches in opposition box': 'Rakip Ceza Sahasında\nTopla Buluşma'
+    'tr': {
+        'Tackles won': 'Başarılı Top Çalma',
+        'Tackles won %': 'Başarılı Top Çalma\nYüzdesi',
+        'Duels won': 'Kazanılan İkili Mücadele',
+        'Duels won %': 'Kazanılan İkili Mücadele\nYüzdesi',
+        'Aerials won': 'Kazanılan Hava Topu',
+        'Aerials won %': 'Kazanılan Hava Topu\nYüzdesi',
+        'Interceptions': 'Top Kapma',
+        'Recoveries': 'Top Kazanma',
+        'Accurate passes': 'Başarılı Pas',
+        'Pass accuracy': 'Başarılı Pas\nYüzdesi',
+        'Successful crosses': 'Başarılı Orta',
+        'Cross accuracy': 'Başarılı Orta\nYüzdesi',
+        'Accurate long balls': 'Başarılı Uzun Top',
+        'Long ball accuracy': 'Başarılı Uzun Top\nYüzdesi',
+        'Chances created': 'Gol Şansı Yaratma',
+        'Touches': 'Topla Buluşma',
+        'Dribbles': 'Başarılı Çalım',
+        'Dribbles success rate': 'Başarılı Çalım\nYüzdesi',
+        'Saves': 'Kurtarışlar',
+        'Save percentage': 'Kurtarış Yüzdesi',
+        'Goals prevented': 'Gol Kurtarma',
+        'Clean sheets': 'Gol Yemeden\nBitirilen Maçlar',
+        'Penalty goals saves': 'Penaltı Kurtarma',
+        'Blocked scoring attempt': 'Gol Engelleme',
+        'Possession won final 3rd': 'Rakip Alanda\nTop Çalma',
+        'Fouls committed': 'Yapılan Faul',
+        'Fouls won': 'Kazanılan Faul',
+        'Goals': 'Gol',
+        'xG': 'Gol Beklentisi (xG)',
+        'xGOT': 'İsabetli Şutta xG (xGOT)',
+        'xG excl. penalty': 'Penaltısız Gol Beklentisi\n(xGnP)',
+        'Shots': 'Şut',
+        'Shots on target': 'İsabetli Şut',
+        'xA': 'Asist Beklentisi (xA)',
+        'Touches in opposition box': 'Rakip Ceza Sahasında\nTopla Buluşma'
+    },
+    'fr': {
+        'Tackles won': 'Tacles réussis',
+        'Tackles won %': 'Pourcentage de\ntacles réussis',
+        'Duels won': 'Duels gagnés',
+        'Duels won %': 'Pourcentage de\nduels gagnés',
+        'Aerials won': 'Duels aériens gagnés',
+        'Aerials won %': 'Pourcentage de\nduels aériens gagnés',
+        'Interceptions': 'Interceptions',
+        'Recoveries': 'Ballons récupérés',
+        'Accurate passes': 'Passes réussies',
+        'Pass accuracy': 'Précision des passes',
+        'Successful crosses': 'Centres réussis',
+        'Cross accuracy': 'Précision des centres',
+        'Accurate long balls': 'Longs ballons réussis',
+        'Long ball accuracy': 'Précision des\nlongs ballons',
+        'Chances created': 'Occasions créées',
+        'Touches': 'Touches de balle',
+        'Dribbles': 'Dribbles réussis',
+        'Dribbles success rate': 'Taux de\nréussite des dribbles',
+        'Saves': 'Arrêts',
+        'Save percentage': 'Pourcentage d\'arrêts',
+        'Goals prevented': 'Buts évités',
+        'Clean sheets': 'Matchs sans encaisser',
+        'Penalty goals saves': 'Arrêts sur penalty',
+        'Blocked scoring attempt': 'Tentative de but bloquée',
+        'Possession won final 3rd': 'Ballons récupérés\ndans le dernier tiers',
+        'Fouls committed': 'Fautes commises',
+        'Fouls won': 'Fautes subies',
+        'Goals': 'Buts',
+        'xG': 'xG (buts attendus)',
+        'xGOT': 'xGOT (xG sur tirs cadrés)',
+        'xG excl. penalty': 'xG hors penalty',
+        'Shots': 'Tirs',
+        'Shots on target': 'Tirs cadrés',
+        'xA': 'xA (passes décisives attendues)',
+        'Touches in opposition box': 'Touches dans la surface\nadverse'
+    }
 }
 
-def translate_stats(stat_titles, translation_dict):
-    return [translation_dict.get(stat, stat) for stat in stat_titles]
+def translate_stats(stat_titles, lang, translation_dict):
+    if lang == 'en':
+        return stat_titles
+    return [translation_dict.get(lang, {}).get(stat, stat) for stat in stat_titles]
 
 def fetch_player_stats(player_id: int, season_id: str) -> Optional[Dict[str, Any]]:
     """
@@ -538,21 +603,19 @@ st.markdown("""
                     """, unsafe_allow_html=True
                 )
 
-# player_id kontrolü ekleyelim
 if 'selected_player' in st.session_state and st.session_state.selected_player:
     player_id = all_players.get(st.session_state.selected_player)
     
-    if player_id:  # player_id None değilse devam et
+    if player_id:
         player_name = str(get_player_name(int(player_id)))
         
         player_seasons = get_player_season_infos(player_id)
         
-        if player_seasons:  # None kontrolü
+        if player_seasons:
             player_season_id = select_season_and_league(player_seasons)
         else:
             player_season_id = "0-0"
             
-        # Update the position translation to handle both languages
         def translate_position(position, lang):
             position_translations = {
                 'en': {
@@ -592,11 +655,29 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                     "Striker": "Forvet",
                     "Forward": "Hücumcu",
                     "Center Forward": "Santrafor"
+                },
+                'fr': {
+                    "Goalkeeper": "Gardien de but",
+                    "Keeper": "Gardien",
+                    "Right Back": "Arrière droit",
+                    "Left Back": "Arrière gauche",
+                    "Center Back": "Défenseur central",
+                    "Right Wing-Back": "Latéral droit offensif",
+                    "Left Wing-Back": "Latéral gauche offensif",
+                    "Right Midfielder": "Milieu droit",
+                    "Left Midfielder": "Milieu gauche",
+                    "Central Midfielder": "Milieu central",
+                    "Attacking Midfielder": "Milieu offensif",
+                    "Defensive Midfielder": "Milieu défensif",
+                    "Right Winger": "Ailier droit",
+                    "Left Winger": "Ailier gauche",
+                    "Striker": "Attaquant",
+                    "Forward": "Avant",
+                    "Center Forward": "Avant-centre"
                 }
             }
-            return position_translations[lang].get(position, position)
+            return position_translations.get(lang, position_translations['en']).get(position, position)
 
-        # Then update where we use the position translation
         player_primary_position = get_player_primary_position(player_id)
         player_position_translated = translate_position(player_primary_position, selected_lang)
         
@@ -622,19 +703,15 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
             help=TRANSLATIONS[selected_lang]['pizza_template_help']
         )
 
-        # Get the template key based on selected value
         def get_template_key(selected_template, lang):
-            # Reverse lookup in templates dictionary
             templates = TRANSLATIONS[lang]['templates']
             for key, value in templates.items():
                 if value == selected_template:
                     return key
             return None
 
-        # Get the template key
         template_key = get_template_key(pizza_template, selected_lang)
 
-        # Use template key for conditions instead of translated values
         if template_key == "Goalkeeper":
             stat_titles = ["Saves", "Save percentage", "Goals prevented", "Clean sheets", "Penalty goals saves",
                          "Pass accuracy", "Accurate long balls", "Long ball accuracy"]
@@ -682,7 +759,6 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                 
                 player_minute = int(get_minutes(player_stats, 'Minutes'))
             
-                # player1_df ve player2_df'in boş olup olmadığını kontrol et
                 player_bos_mu = player_df.empty or isinstance(player_df, pd.DataFrame) and player_df.shape == (0, 0)
                 
                 if not player_bos_mu:
@@ -694,18 +770,15 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                     def get_team_name_from_season_and_league(data, season_string, league_string):
                         def season_matches(season_name, season_string):
                             season_parts = season_name.split('/')
-                            # Eğer season_string '/' içeriyorsa, sezon parçalarının herhangi biriyle eşleşiyor mu kontrol et
                             if '/' in season_string:
                                 for part in season_parts:
                                     if part.strip() in season_string.split('/'):
                                         return True
-                            # Eğer season_string '/' içermiyorsa, tam eşleşme kontrolü yap
                             else:
                                 if season_string in season_parts or season_name == season_string:
                                     return True
                             return False
                         
-                        # "senior" altında normal arama yap
                         if 'senior' in data['careerHistory']['careerItems']:
                             for season in data['careerHistory']['careerItems']['senior']['seasonEntries']:
                                 if season['seasonName'] == season_string:
@@ -713,7 +786,6 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                                         if tournament['leagueName'] == league_string:
                                             return season['team'], season['teamId']
                         
-                        # Eğer "senior" altında bulunamazsa, "national team" altında esnek arama yap
                         if 'national team' in data['careerHistory']['careerItems']:
                             for season in data['careerHistory']['careerItems']['national team']['seasonEntries']:
                                 if season_matches(season['seasonName'], season_string):
@@ -725,26 +797,28 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                     
                     player_team, player_team_id = get_team_name_from_season_and_league(player_general_data, player_season_name, player_league)
                     
-                    # Before creating the pizza chart, decide which stat titles to use based on language
                     if selected_lang == 'en':
-                        chart_stat_titles = stat_titles  # Use English titles directly
+                        chart_stat_titles = stat_titles
                         minute_string = "Minutes"
                         data_string = "Data"
-                    else:
-                        chart_stat_titles = translate_stats(stat_titles, translation_dict)  # Translate to Turkish
+                    elif selected_lang == 'tr':
+                        chart_stat_titles = translate_stats(stat_titles, 'tr', translation_dict)
                         minute_string = "Dakika"
                         data_string = "Veri"
+                    elif selected_lang == 'fr':
+                        chart_stat_titles = translate_stats(stat_titles, 'fr', translation_dict)
+                        minute_string = "Minutes"
+                        data_string = "Données"
                     
-                    # Update the pizza chart creation
                     plot = create_pizza_chart(
                         df_stat_values,
                         df_stat_values_percentage,
-                        chart_stat_titles,  # Use language-specific titles
+                        chart_stat_titles,
                         player_name,
                         player_id,
                         player_team_id,
                         player_league,
-                        player_position_translated,  # Use the translated position
+                        player_position_translated,
                         player_minute,
                         minute_string,
                         data_string,
@@ -835,10 +909,8 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                         mime="image/png"
                     )
                     
-                    # Daha fazla boşluk bırakmak için ek boşluk ekleyin
                     st.markdown("<br>", unsafe_allow_html=True)
                     
-                    # Bilgilendirme metinlerini div içinde ortalanmış olarak ayarlama
                     st.markdown(
                         f"""
                         <div style='text-align: center; max-width:550px; margin: 0 auto; cursor:default'>
@@ -854,7 +926,6 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
     #else:
             #st.write("Bir veya her iki oyuncunun verisi bulunamadı.")
 
-# Add a loading state for long operations
 def load_player_data(player_id: int, season_id: str):
     with st.spinner('Oyuncu verileri yükleniyor...'):
         try:
@@ -874,21 +945,17 @@ def load_player_data(player_id: int, season_id: str):
             st.error(f"Veri yüklenirken hata oluştu: {str(e)}")
             return None
 
-# Function to convert image to base64
 def img_to_base64(img_path):
     with open(img_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode()
 
-# Signature section
-st.sidebar.markdown("---")  # Add a horizontal line to separate your signature from the content
+st.sidebar.markdown("---")  
 
-# Load and encode icons
 twitter_icon_base64 = img_to_base64("icons/twitter.png")
 github_icon_base64 = img_to_base64("icons/github.png")
-twitter_icon_white_base64 = img_to_base64("icons/twitter_white.png")  # White version of Twitter icon
-github_icon_white_base64 = img_to_base64("icons/github_white.png")  # White version of GitHub icon
+twitter_icon_white_base64 = img_to_base64("icons/twitter_white.png")
+github_icon_white_base64 = img_to_base64("icons/github_white.png") 
 
-# Display the icons with links at the bottom of the sidebar
 st.sidebar.markdown(
     f"""
     <style>
