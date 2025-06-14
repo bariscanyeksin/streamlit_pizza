@@ -731,7 +731,7 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                          'Touches', 'Dribbles']
             
         if template_key == "Winger - Attacking Midfielder":
-            stat_titles = ['xG', 'Shots', 'Shots on target',
+            stat_titles = ['Goals', 'Shots', 'Shots on target',
                          'xA', 'Chances created', 'Successful crosses',
                          'Duels won', 'Possession won final 3rd', 'Fouls won',
                          'Dribbles', 'Dribbles success rate']
