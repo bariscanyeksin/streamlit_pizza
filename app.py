@@ -915,7 +915,7 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                     
                     st.markdown(
                         f"""
-                        <div style='text-align: center; max-width:550px; margin: 0 auto; cursor:default'>
+                        <div style='text-align: center; max-width:550px; margin: 0 auto; cursor:default; margin-bottom: 50px;'>
                             <p style='font-size:12px; color:gray;'>{TRANSLATIONS[selected_lang]['info_text']}</p>
                         </div>
                         """,
