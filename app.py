@@ -283,7 +283,7 @@ def fetch_players(search_term):
         data = response.json()
         
         if not isinstance(data, list) or len(data) == 0 or 'suggestions' not in data[0]:
-            st.warning("Oyuncu bulunamadı.")
+            st.warning(TRANSLATIONS[selected_lang]['player_not_found'])
             return {}
 
         suggestions = data[0]['suggestions']
@@ -292,7 +292,7 @@ def fetch_players(search_term):
                   if player['type'] == 'player'}
         
         if not players:
-            st.warning("Arama kriterlerine uygun oyuncu bulunamadı.")
+            st.warning(TRANSLATIONS[selected_lang]['player_not_found'])
             
         return players
 
@@ -344,7 +344,7 @@ else:
 
         player_id = all_players.get(selected_player)
     else:
-        st.sidebar.write("Aramanızla eşleşen oyuncu bulunamadı.")
+        st.sidebar.write(TRANSLATIONS[selected_lang]['player_not_found'])
         
 def get_player_season_infos(player_id):
     response = requests.get(f'https://www.fotmob.com/api/playerData?id={player_id}', headers=headers(player_id))
@@ -927,11 +927,11 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                         unsafe_allow_html=True
                     )
             else:
-                st.write("Oyuncunun verisi bulunamadı.")        
+                st.write(TRANSLATIONS[selected_lang]['no_player_data'])        
         else:
-            st.write("Oyuncunun verisi bulunamadı.")
+            st.write(TRANSLATIONS[selected_lang]['no_player_data'])
     #else:
-            #st.write("Bir veya her iki oyuncunun verisi bulunamadı.")
+            #st.write(TRANSLATIONS[selected_lang]['no_player_data'])
 
 def load_player_data(player_id: int, season_id: str):
     with st.spinner('Oyuncu verileri yükleniyor...'):
