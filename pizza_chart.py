@@ -238,9 +238,12 @@ def create_pizza_chart(values, values_perc, params, player_name, player_id, team
              color=label_color,
              fontproperties=prop)
     
-    min_90s = minute / 90
-    
-    subtitle_2_text = f"{minute} {minute_string} - {min_90s:.1f} 90s'"
+    if minute == None:
+        min_90s = ""
+        subtitle_2_text = ""
+    else:
+        min_90s = minute / 90
+        subtitle_2_text = f"{minute} {minute_string} - {min_90s:.1f} 90s'"
     
     title_ax.text(0, 0.1,
              subtitle_2_text,
