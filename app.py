@@ -759,7 +759,12 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
 
                 player_started_matches = get_started_matches_count(player_stats, 'Started')
                 
-                player_minute = int(get_minutes(player_stats, 'Minutes'))
+                minute_str = get_minutes(player_stats, 'Minutes')
+
+                if minute_str is not None:
+                    player_minute = int(minute_str)
+                else:
+                    player_minute = None
             
                 player_bos_mu = player_df.empty or isinstance(player_df, pd.DataFrame) and player_df.shape == (0, 0)
                 
