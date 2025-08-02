@@ -825,6 +825,7 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                         player_id,
                         player_team_id,
                         player_league,
+                        player_season_name,
                         player_position_translated,
                         player_minute,
                         minute_string,
@@ -1003,3 +1004,4 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
+
