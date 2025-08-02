@@ -73,7 +73,7 @@ def fetch_team_logo(team_id):
             print(f"HTTPError: {e}")
         return None
 
-def create_pizza_chart(values, values_perc, params, player_name, player_id, team_id, league_name, position, minute, minute_string, data_string, background_color="white", main_color="#212e47", label_color="gray"):
+def create_pizza_chart(values, values_perc, params, player_name, player_id, team_id, league_name, season_name, position, minute, minute_string, data_string, background_color="white", main_color="#212e47", label_color="gray"):
     """
     Create a pizza chart with separate slices for each statistic.
     
@@ -228,7 +228,7 @@ def create_pizza_chart(values, values_perc, params, player_name, player_id, team
              color="white",
              fontproperties=bold_prop)
     
-    subtitle_text = f"{position} - {league_name}"
+    subtitle_text = f"{position} - {league_name} {season_name}"
     
     title_ax.text(0, 0.35,
              subtitle_text,
@@ -322,3 +322,4 @@ def create_pizza_chart(values, values_perc, params, player_name, player_id, team
                           linestyle='-')  # Düz çizgi
     
     return plt
+
