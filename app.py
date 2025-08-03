@@ -741,7 +741,7 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
         if template_key == "Striker":
             stat_titles = ['Goals', 'xG excl. penalty', 'Shots', 'Shots on target',
                          'Assists', 'Chances created',
-                         'Duels won', 'Duels won %', 'Aerials won', 'Aerials won %', 'Possession won final 3rd', 'Fouls won']
+                         'Duels won', 'Duels won %', 'Aerials won', 'Dribbles', 'Possession won final 3rd', 'Fouls won']
 
         player_stats = fetch_player_stats(int(player_id), player_season_id)
         
@@ -1004,4 +1004,5 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
