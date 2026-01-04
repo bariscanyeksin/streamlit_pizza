@@ -378,8 +378,7 @@ def get_player_primary_position(player_id):
     
 translation_dict = {
     'tr': {
-        'Tackles won': 'Başarılı Top Çalma',
-        'Tackles won %': 'Başarılı Top Çalma\nYüzdesi',
+        'Tackles': 'Top Çalma',
         'Duels won': 'Kazanılan İkili Mücadele',
         'Duels won %': 'Kazanılan İkili Mücadele\nYüzdesi',
         'Aerials won': 'Kazanılan Hava Topu',
@@ -416,8 +415,7 @@ translation_dict = {
         'Touches in opposition box': 'Rakip Ceza Sahasında\nTopla Buluşma'
     },
     'fr': {
-        'Tackles won': 'Tacles réussis',
-        'Tackles won %': 'Pourcentage de\ntacles réussis',
+        'Tackles': 'Tacles',
         'Duels won': 'Duels gagnés',
         'Duels won %': 'Pourcentage de\nduels gagnés',
         'Aerials won': 'Duels aériens gagnés',
@@ -719,17 +717,17 @@ if 'selected_player' in st.session_state and st.session_state.selected_player:
                          "Pass accuracy", "Accurate long balls", "Long ball accuracy"]
 
         if template_key == "Center Back":
-            stat_titles = ['Tackles won', 'Tackles won %', 'Duels won', 'Duels won %', 'Interceptions', 'Recoveries', 'Blocked scoring attempt',
+            stat_titles = ['Tackles', 'Duels won', 'Duels won %', 'Interceptions', 'Recoveries', 'Blocked scoring attempt',
                          'Accurate passes', 'Accurate long balls',  'Long ball accuracy']
 
         if template_key == "Right Back - Left Back":
-            stat_titles = ['Tackles won', 'Duels won', 'Duels won %', 'Interceptions', 'Recoveries',
+            stat_titles = ['Tackles', 'Duels won', 'Duels won %', 'Interceptions', 'Recoveries',
                          'Accurate passes', 'Chances created', 'Successful crosses', 'Cross accuracy',
                          'Dribbles', 'Touches in opposition box']
             
         if template_key == "Central Midfielder":
             stat_titles = ['Accurate passes', 'Pass accuracy', 'Accurate long balls', 'Long ball accuracy',
-                         'Tackles won', 'Interceptions', 'Recoveries', 'Duels won', 'Aerials won', 'Possession won final 3rd',
+                         'Tackles', 'Interceptions', 'Recoveries', 'Duels won', 'Aerials won', 'Possession won final 3rd',
                          'Touches', 'Dribbles']
             
         if template_key == "Winger - Attacking Midfielder":
@@ -1004,6 +1002,7 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 
 
